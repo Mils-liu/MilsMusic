@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="none">
+        <item
+            android:icon="@drawable/shake_no"
+            android:id="@+id/nav_shake"
+            android:title="摇摇切歌"/>
+        <item
+            android:id="@+id/nav_two"
+            android:title="关于麦响"
+            android:icon="@drawable/icon"/>
+        <item
+            android:icon="@drawable/finish"
+            android:id="@+id/nav_finish"
+            android:title="退出应用"/>
+    </group>
+</menu>

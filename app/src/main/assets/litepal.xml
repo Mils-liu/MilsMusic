@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<litepal>
+    <dbname value="LoveMusic"></dbname>
+    <version value="4"></version>
+    <list>
+        <mapping class="com.example.administrator.mymusic2.datebase.musicDatebase.LoveMusic"></mapping>
+        <mapping class="com.example.administrator.mymusic2.datebase.locationDatebase.Province"/>
+        <mapping class="com.example.administrator.mymusic2.datebase.locationDatebase.City"/>
+        <mapping class="com.example.administrator.mymusic2.datebase.locationDatebase.County"/>
+    </list>
+</litepal>
