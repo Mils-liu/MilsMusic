@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">麦响音乐盒</string>
+    <string name="app_name">本地音乐盒</string>
     <string name="cycle_all">全部循环</string>
     <string name="cycle_one">单曲循环</string>
     <string name="cycle_random">随机播放</string>

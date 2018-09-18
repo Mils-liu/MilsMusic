@@ -402,68 +402,6 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     }
 
     //接受本地广播
-    public class LocalMusicUrlReceiver extends BroadcastReceiver{
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action=intent.getAction();
-            if(action.equals("MusicUrl")){//播放音乐
-                String url = intent.getStringExtra("url");
-                String songStr=intent.getStringExtra("song");
-                String singerStr=intent.getStringExtra("singer");
-                if(musicService.mediaPlayer!=null){
-                    if(!lastUrl.equals(url)){
-                        musicService.mediaPlayer.reset();
-                        musicService.setUrl(url);
-                        musicService.start();
-                        mhandler.removeCallbacksAndMessages(null);
-                    }else {
-                        musicService.setUrl(url);
-                        musicService.start();
-                    }
-                    Message message=new Message();
-                    message.what=0;
-                    mhandler.sendMessage(message);
-                    music_play.setBackgroundResource(R.drawable.pause);
-                    song.setText(songStr);
-                    singer.setText(singerStr);
-                    STATE=getResources().getString(R.string.play);
-                    seekBar.setEnabled(true);
-                }
-            }
-            if(action.equals("Delete")){//删除指定音乐
-                if(DialogFragment_playMusic.Mode_Play==1000)
-                    cycle_all("");
-                else if(DialogFragment_playMusic.Mode_Play==1002)
-                    cycle_random();
-            }
-            if(action.equals("Delete_All")){//删除播放列表所有音乐
-                mhandler.removeCallbacksAndMessages(null);
-                seekBar.setProgress(0);
-                musicService.mediaPlayer.reset();
-                STATE=getResources().getString(R.string.pause);
-                song.setText("Song");
-                singer.setText("Singer");
-                music_play.setBackgroundResource(R.drawable.play);
-                seekBar.setEnabled(false);
-                musicService.abandonAudioFocus();
-            }
-            if (action.equals("Shake")){//摇摇切歌
-                if(Total>0){
-                    vibrator=(Vibrator) getBaseContext().getSystemService(Context.VIBRATOR_SERVICE);
-                    vibrator.vibrate(500);
-
-                    if(DialogFragment_playMusic.Mode_Play==1002){
-                        cycle_random();
-                    }else{
-                        cycle_all("Right");
-                    }
-                    Log.d("Shake","MusicShake");
-                }else{
-                    Toast.makeText(MusicActivity.this,"请先添加歌曲",Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-    }
 
     //连接MusicService
     private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -819,4 +757,67 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
             }
         }
     }
+    public class LocalMusicUrlReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action=intent.getAction();
+            if(action.equals("MusicUrl")){//播放音乐
+                String url = intent.getStringExtra("url");
+                String songStr=intent.getStringExtra("song");
+                String singerStr=intent.getStringExtra("singer");
+                if(musicService.mediaPlayer!=null){
+                    if(!lastUrl.equals(url)){
+                        musicService.mediaPlayer.reset();
+                        musicService.setUrl(url);
+                        musicService.start();
+                        mhandler.removeCallbacksAndMessages(null);
+                    }else {
+                        musicService.setUrl(url);
+                        musicService.start();
+                    }
+                    Message message=new Message();
+                    message.what=0;
+                    mhandler.sendMessage(message);
+                    music_play.setBackgroundResource(R.drawable.pause);
+                    song.setText(songStr);
+                    singer.setText(singerStr);
+                    STATE=getResources().getString(R.string.play);
+                    seekBar.setEnabled(true);
+                }
+            }
+            if(action.equals("Delete")){//删除指定音乐
+                if(DialogFragment_playMusic.Mode_Play==1000)
+                    cycle_all("");
+                else if(DialogFragment_playMusic.Mode_Play==1002)
+                    cycle_random();
+            }
+            if(action.equals("Delete_All")){//删除播放列表所有音乐
+                mhandler.removeCallbacksAndMessages(null);
+                seekBar.setProgress(0);
+                musicService.mediaPlayer.reset();
+                STATE=getResources().getString(R.string.pause);
+                song.setText("Song");
+                singer.setText("Singer");
+                music_play.setBackgroundResource(R.drawable.play);
+                seekBar.setEnabled(false);
+                musicService.abandonAudioFocus();
+            }
+            if (action.equals("Shake")){//摇摇切歌
+                if(Total>0){
+                    vibrator=(Vibrator) getBaseContext().getSystemService(Context.VIBRATOR_SERVICE);
+                    vibrator.vibrate(500);
+
+                    if(DialogFragment_playMusic.Mode_Play==1002){
+                        cycle_random();
+                    }else{
+                        cycle_all("Right");
+                    }
+                    Log.d("Shake","MusicShake");
+                }else{
+                    Toast.makeText(MusicActivity.this,"请先添加歌曲",Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
 }
