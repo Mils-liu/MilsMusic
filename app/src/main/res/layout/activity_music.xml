@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerInParent="true"
-                android:text="麦响音乐盒"
+                android:text="本地音乐盒"
                 android:textColor="#fff"
                 android:textSize="20dp"/>
         </RelativeLayout>

@@ -88,7 +88,7 @@ public class Fragment_loveMusic extends Fragment{
                         Position_Play=position;
                         break;
                     case R.id.delete_love:
-                        Toast.makeText(getActivity(),"delete",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(),"删除成功",Toast.LENGTH_SHORT).show();
                         DataSupport.deleteAll(LoveMusic.class,"url=?",loveList.get(position).getUrl());
                         loveList.remove(position);
                         adapter.notifyDataSetChanged();

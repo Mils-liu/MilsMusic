@@ -40,7 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="麦响音乐盒"
+                android:text="本地音乐盒"
                 android:textSize="30dp"
                 android:textColor="@color/blue"/>
         </LinearLayout>
