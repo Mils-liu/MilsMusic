@@ -23,7 +23,6 @@ public class LrcRow implements Comparable<com.example.administrator.mymusic2.lrc
 
     public LrcRowShowMode ShowMode = LrcRowShowMode.Normal;
 
-
     /**
      * @param rowData        歌词数据
      * @param timeText       歌词显示时间

@@ -5,13 +5,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.Vibrator;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
-import com.example.administrator.mymusic2.activity.LockScreenActivity;
 import com.example.administrator.mymusic2.activity.MusicActivity;
 import com.example.administrator.mymusic2.shake.ShakeListener;
 
@@ -21,14 +22,12 @@ import static com.example.administrator.mymusic2.activity.MusicActivity.SHAKE_ST
 
 public class MusicService extends Service {
     //手机摇一摇
-    private static final String TAG="ShakeService";
+    private static final String TAG="MusicServiceManager";
     private ShakeListener mShakeListener;
     private Vibrator vibrator;
     private long lastUpdateTime;
     private BroadcastReceiver receiver;
-
-    /*private LockScreen receiver;
-    private IntentFilter intentFilter;*/
+    private AudioManager mAm;
 
     private LocalBroadcastManager serviceBroadcastManager;
     public MediaPlayer mediaPlayer;
@@ -65,11 +64,8 @@ public class MusicService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        /*intentFilter=new IntentFilter();
-        intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
-        receiver=new LockScreen();
-        registerReceiver(receiver,intentFilter);*/
         serviceBroadcastManager=LocalBroadcastManager.getInstance(this);
+        mAm = (AudioManager) getSystemService(AUDIO_SERVICE);
 
         vibrator=(Vibrator) getBaseContext().getSystemService(Context.VIBRATOR_SERVICE);
         mShakeListener=new ShakeListener(getBaseContext());
@@ -91,23 +87,45 @@ public class MusicService extends Service {
             }
         } );
 
-        receiver = new BroadcastReceiver() {//接受息屏的本地广播
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (intent.getAction() == Intent.ACTION_SCREEN_OFF) {
-                    System.out.println("收到锁屏广播");
-                    Intent lockscreen = new Intent(MusicService.this, LockScreenActivity.class);
-                    lockscreen.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    /*startActivity(lockscreen);*/
-                }
-            }
-        };
-
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         registerReceiver(receiver, filter);
 
+    }
+
+    AudioManager.OnAudioFocusChangeListener afChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+        public void onAudioFocusChange(int focusChange) {
+            if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
+// Pause playback
+                pause();
+                Log.d(TAG,"pause");
+            } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+// Resume playback
+                resume();
+                Log.d(TAG,"start");
+            } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+// mAm.unregisterMediaButtonEventReceiver(RemoteControlReceiver);
+                mAm.abandonAudioFocus(afChangeListener);
+// Stop playback
+                pause();
+                Log.d(TAG,"stop");
+            }
+        }
+    };
+
+    /*获取音频焦点*/
+    private boolean requestFocus() {
+// Request audio focus for playback
+        int result = mAm.requestAudioFocus(afChangeListener,
+// Use the music stream.
+                AudioManager.STREAM_MUSIC,
+// Request permanent focus.
+                AudioManager.AUDIOFOCUS_GAIN);
+        return result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
+    }
+
+    public void abandonAudioFocus(){
+        mAm.abandonAudioFocus(afChangeListener);
     }
 
     @Override
@@ -117,10 +135,12 @@ public class MusicService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public void star(){
-        if(mediaPlayer!=null){
-            mediaPlayer.start();
-            MusicActivity.STATE = "PLAY";
+    public void start(){
+        if(requestFocus()){
+            if(mediaPlayer!=null){
+                mediaPlayer.start();
+                MusicActivity.STATE = "PLAY";
+            }
         }
     }
     public void pause(){
@@ -130,6 +150,12 @@ public class MusicService extends Service {
         }
     }
 
+    public void resume(){
+        if(mediaPlayer!=null){
+            mediaPlayer.start();
+            MusicActivity.STATE = "PLAY";
+        }
+    }
 
     public MusicBinder binder=new MusicBinder();
     public class MusicBinder extends Binder {
@@ -142,18 +168,6 @@ public class MusicService extends Service {
         // TODO: Return the communication channel to the service.
         return binder;
     }
-
-    /*public class LockScreen extends BroadcastReceiver {
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action.equals(Intent.ACTION_SCREEN_OFF)) {
-                Intent lockscreen = new Intent(MusicService.this, LockScreenActivity.class);
-                lockscreen.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(lockscreen);
-            }
-        }
-    }*/
-
 
     @Override
     public void onDestroy() {

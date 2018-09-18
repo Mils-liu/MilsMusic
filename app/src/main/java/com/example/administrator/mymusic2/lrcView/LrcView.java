@@ -28,6 +28,7 @@ public class LrcView extends View implements ILrcView {
     private LrcViewContext lrcContext;//上下文
     private List<LrcRow> mRows;//行数据
     private Boolean TextSizeAutomaticMode = false;//是否文字自动适配界面
+    private Boolean LrcExistence = false;
 
     public LrcView(Context context) {
         super(context);
@@ -72,7 +73,9 @@ public class LrcView extends View implements ILrcView {
                 float Distance = event.getY() - ActionDownY;
                 if (Math.abs(Distance) > 5) {
                     lrcContext.CurrentState = Seeking;
-                    doSeek(event);
+                    if(LrcExistence){
+                        doSeek(event);
+                    }
                 } else {
                     lrcContext.CurrentState = normal;
                 }
@@ -215,7 +218,6 @@ public class LrcView extends View implements ILrcView {
         if (FirstRowPositionY == 0) {
             FirstRowPositionY = defaultFirstRowY;
         }
-
     }
 
     //
@@ -308,7 +310,6 @@ public class LrcView extends View implements ILrcView {
             }
             RowPositionTop = RowPositionBottom - lrcRow.ContentHeight;
 
-
             if (lrcContext.CurrentState == LrcViewState.normal) {
                 if (i == HeightLightRowPosition) {
                     drawHeightLightRow(i, lrcRow, canvas, rowX);
@@ -393,6 +394,11 @@ public class LrcView extends View implements ILrcView {
     @Override
     public void setLrcData(List<LrcRow> lrcRows) {
         InitLrcRowDada = false;
+        if(lrcRows == null){
+            LrcExistence = false;
+        }else {
+            LrcExistence = true;
+        }
         mRows = lrcRows;
         //初始化
         initData();
@@ -411,7 +417,6 @@ public class LrcView extends View implements ILrcView {
         FirstRowPositionY = 0;//第一行y位置
         DragRowPositionY = 0;//拖动行位置
     }
-
 
     /**
      * @param lrcRows
@@ -448,7 +453,6 @@ public class LrcView extends View implements ILrcView {
         }
     }
 
-
     private void initLrcView() {
         if (TextSizeAutomaticMode) {
             int textHeight = getViewHeight() / 20 - getLrcSetting().LinePadding;
@@ -464,7 +468,6 @@ public class LrcView extends View implements ILrcView {
         }
         lrcContext.initTextPaint();
     }
-
 
     private List<String> makeSecureLines(String text, Paint mPaint, float secureLineWidth) {
         List<String> lines = new ArrayList<String>();
@@ -490,7 +493,6 @@ public class LrcView extends View implements ILrcView {
     @Override
     public void setLrcViewListener(ILrcViewListener mLrcViewListener) {
         this.mLrcViewListener = mLrcViewListener;
-
     }
 
     @Override
@@ -534,19 +536,27 @@ public class LrcView extends View implements ILrcView {
             return;
         }
 
-        float heightLightRowShowY = getTimeLineYPosition() + getLrcSetting().HeightLightRowTextSize / 2;
+        float heightLightRowShowY = getTimeLineYPosition();
 
-        Log.d("LrcViewTAG","getTimeLineYPosition():"+getTimeLineYPosition());
+        Log.d("LrcViewTAG2","getTimeLineYPosition():"+getTimeLineYPosition());
+        for(LrcShowRow row:heightLightRs){
+            Log.d("LrcViewTAG2","heightLightLrc:"+row);
+        }
 
         float trySelectRowY = tryRs.get(0).YPosition;
 
-        Log.d("LrcViewTAG","trySelectRowY:"+trySelectRowY);
+        Log.d("LrcViewTAG2","trySelectRowY:"+trySelectRowY);
+        for(LrcShowRow tryRow:tryRs){
+            Log.d("LrcViewTAG2","tryRow:"+tryRow);
+        }
 
-        final float distance = heightLightRowShowY - trySelectRowY-getLrcSetting().LinePadding;
+        final float distance = (heightLightRowShowY - trySelectRowY)*10.0f;
 
-        Log.d("LrcViewTAG","distance:"+distance);
+        Log.d("LrcViewTAG2","distance:"+distance);
 
         final float FirstRowPositionPreY = FirstRowPositionY;
+
+        Log.d("LrcViewTAG2","FirstRowPositionPreY:"+FirstRowPositionPreY);
 
         //cancel pre animation
         if (valueAnimator != null) {
@@ -560,6 +570,8 @@ public class LrcView extends View implements ILrcView {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 float value = (Float) animation.getAnimatedValue();
+                Log.d("LrcViewTAG2","value:"+value);
+                Log.d("LrcViewTAG2","-------------------------------------------------");
                 FirstRowPositionY = FirstRowPositionPreY + value;
                 invalidate();
             }

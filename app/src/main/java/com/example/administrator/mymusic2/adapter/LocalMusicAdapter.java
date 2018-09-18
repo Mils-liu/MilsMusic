@@ -63,6 +63,7 @@ public class LocalMusicAdapter extends RecyclerView.Adapter<LocalMusicAdapter.Vi
         Log.d("TAG","AdapterPosition:"+position);
         if(localMusic.getUrl().equals(url)){
             holder.musicAdd.setImageResource(R.drawable.icon);
+            Log.d("TAG","selectPosition:"+position);
         }
 
         if(onRecyclerViewListener!=null){

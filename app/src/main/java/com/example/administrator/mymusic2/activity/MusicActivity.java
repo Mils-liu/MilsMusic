@@ -55,7 +55,6 @@ import com.example.administrator.mymusic2.fragment.Fragment_recentMusic;
 import com.example.administrator.mymusic2.gson.weatherGson.Weather;
 import com.example.administrator.mymusic2.util.HttpUtil;
 import com.example.administrator.mymusic2.util.Utility;
-import com.skyfishjy.library.RippleBackground;
 
 import org.litepal.crud.DataSupport;
 
@@ -68,6 +67,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
+import static android.view.View.GONE;
 import static com.example.administrator.mymusic2.fragment.DialogFragment_playMusic.Position_Play;
 import static com.example.administrator.mymusic2.fragment.DialogFragment_playMusic.Total;
 
@@ -98,8 +98,6 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     private TextView weather_info,weather_pm25,weather_location,weather_temp;
     private ImageView weather_icon;
     private FrameLayout music_layout;
-
-    private RippleBackground rippleBackground,rippleBackground_left,rippleBackground_right,rippleBackground_list;
 
     //本地广播
     private LocalMusicUrlReceiver receiver;
@@ -273,11 +271,6 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         music_left.setOnClickListener(this);
         music_right.setOnClickListener(this);
 
-        rippleBackground=(RippleBackground)findViewById(R.id.content);
-        rippleBackground_left=(RippleBackground)findViewById(R.id.content_left);
-        rippleBackground_right=(RippleBackground)findViewById(R.id.content_right);
-        rippleBackground_list=(RippleBackground)findViewById(R.id.content_list);
-
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -347,12 +340,11 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.list_play_music:
                 new DialogFragment_playMusic().show(getFragmentManager(),"dialog_fragment");
-                /*Ripple(rippleBackground_list);*/
                 break;
             case R.id.play_music:
                 if((musicService.mediaPlayer!=null)&&(Total!=0)&&Position_Play!=-1){
                     if(STATE.equals(getResources().getString(R.string.play))){
-                        musicService.mediaPlayer.pause();
+                        musicService.pause();
                         music_play.setBackgroundResource(R.drawable.play);
                         mhandler.removeCallbacksAndMessages(null);
                         Message message=new Message();
@@ -360,14 +352,13 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
                         mhandler.sendMessage(message);
                         STATE=getResources().getString(R.string.pause);
                     }else if(STATE.equals(getResources().getString(R.string.pause))){
-                        musicService.mediaPlayer.start();
+                        musicService.start();
                         music_play.setBackgroundResource(R.drawable.pause);
                         STATE=getResources().getString(R.string.play);
                         Message message=new Message();
                         message.what=0;
                         mhandler.sendMessage(message);
                     }
-                    /*Ripple(rippleBackground);*/
                 }else
                     Toast.makeText(MusicActivity.this,"请先添加歌曲",Toast.LENGTH_SHORT).show();
                 break;
@@ -378,7 +369,6 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
                     else
                         cycle_all("Left");
                 }
-                /*Ripple(rippleBackground_left);*/
                 break;
             case R.id.right_music:
                 if((musicService.mediaPlayer!=null)&&(Total!=0)){
@@ -387,7 +377,6 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
                     else
                         cycle_all("Right");
                 }
-                /*Ripple(rippleBackground_right);*/
                 break;
         }
     }
@@ -425,11 +414,11 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
                     if(!lastUrl.equals(url)){
                         musicService.mediaPlayer.reset();
                         musicService.setUrl(url);
-                        musicService.star();
+                        musicService.start();
                         mhandler.removeCallbacksAndMessages(null);
                     }else {
                         musicService.setUrl(url);
-                        musicService.star();
+                        musicService.start();
                     }
                     Message message=new Message();
                     message.what=0;
@@ -456,6 +445,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
                 singer.setText("Singer");
                 music_play.setBackgroundResource(R.drawable.play);
                 seekBar.setEnabled(false);
+                musicService.abandonAudioFocus();
             }
             if (action.equals("Shake")){//摇摇切歌
                 if(Total>0){
@@ -681,17 +671,6 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
             mLocationClient.stop();
             finish();
         }
-    }
-
-    private void Ripple(final RippleBackground ripple){
-        ripple.startRippleAnimation();
-        new Handler().postDelayed(new Runnable(){
-            @Override
-            public void run() {
-                // TODO Auto-generated method stub
-                ripple.stopRippleAnimation();
-            }
-        }, 500);
     }
 
     private void cycle_all(String state){//列表循环

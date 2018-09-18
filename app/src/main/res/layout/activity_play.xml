@@ -111,10 +111,10 @@
             </LinearLayout>
         </android.support.percent.PercentFrameLayout>
         <Button
-            android:id="@+id/getLrcCover"
+            android:id="@+id/btn_getLrc"
             android:layout_width="100dp"
             android:layout_height="30dp"
-            android:text="获取歌词封面"
+            android:text="获取歌词"
             android:textSize="12dp"
             android:textColor="#ffffff"
             android:background="#80000000"

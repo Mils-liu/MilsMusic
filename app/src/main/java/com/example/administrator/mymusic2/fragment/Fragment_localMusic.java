@@ -49,7 +49,7 @@ public class Fragment_localMusic extends Fragment{
     public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_local,container,false);
         super.onCreate(savedInstanceState);
-
+        Log.d("FragmentLife","onCreateView");
         layout_local=(LinearLayout)view.findViewById(R.id.layout_local);
 
         initLocalMusic();
@@ -63,6 +63,9 @@ public class Fragment_localMusic extends Fragment{
         LinearLayoutManager linearLayoutManager=new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(linearLayoutManager);
         adapter=new LocalMusicAdapter(localList);
+        if(Position_Play!=-1){
+            adapter.setDefSelect(playlist.get(Position_Play).getUrl());
+        }
         recyclerView.setAdapter(adapter);
 
         localBroadcastManager=LocalBroadcastManager.getInstance(getActivity());
@@ -99,6 +102,7 @@ public class Fragment_localMusic extends Fragment{
     }
     private void initLocalMusic(){
         localList.clear();
+        Log.d("LocalMusic","initLocalMusic");
         Cursor cursor=null;
         try{
             cursor = getActivity().getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, null, null, null, MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
@@ -196,6 +200,61 @@ public class Fragment_localMusic extends Fragment{
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d("FragmentLife","onDestroy");
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiver);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Log.d("FragmentLife","onAttach");
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d("FragmentLife","onCreate");
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.d("FragmentLife","onActivityCreated");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d("FragmentLife","onStart");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("FragmentLife","onResume");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("FragmentLife","onPause");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d("FragmentLife","onStop");
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d("FragmentLife","onDestroyView");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Log.d("FragmentLife","onDetach");
     }
 }
