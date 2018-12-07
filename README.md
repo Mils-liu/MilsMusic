@@ -1,6 +1,6 @@
 # MilsMusic
 
-![icon](https://upload-images.jianshu.io/upload_images/7019098-7939a38609d9c44e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/60/format/webp)
+![icon](https://upload-images.jianshu.io/upload_images/7019098-7939a38609d9c44e.png?imageMogr2/auto-orient/)
 
 ## 实现功能
 
